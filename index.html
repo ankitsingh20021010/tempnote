@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>TempNote — Temporary Notepad</title>
+
+    <meta
+        name="description"
+        content="TempNote is a simple temporary notepad. Write, organize pages and download your notes. No login required."
+    >
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link
+        rel="icon"
+        href="assets/icons/favicon.svg"
+        type="image/svg+xml"
+    >
+
+</head>
+
+
+<body>
+
+    <div
+        id="app"
+        class="min-h-[100dvh] flex flex-col"
+    >
+
+        <header
+            class="app-header h-16 shrink-0 flex items-center justify-between px-4 md:px-6"
+        >
+
+            <div class="flex items-center gap-3">
+
+                <button
+                    id="menuBtn"
+                    class="icon-btn md:hidden"
+                    aria-label="Open pages"
+                    type="button"
+                >
+                    ☰
+                </button>
+
+                <a
+                    href="#"
+                    class="brand flex items-center gap-2"
+                >
+
+                    <span class="brand-icon">
+                        ✦
+                    </span>
+
+                    <span class="brand-name">
+                        TempNote
+                    </span>
+
+                </a>
+
+                <span
+                    class="hidden sm:inline-block text-xs text-gray-400"
+                >
+                    Temporary workspace
+                </span>
+
+            </div>
+
+
+            <div class="flex items-center gap-2">
+
+                <button
+                    id="clearBtn"
+                    class="header-btn hidden sm:flex"
+                    type="button"
+                >
+                    Clear
+                </button>
+
+                <button
+                    id="downloadBtn"
+                    class="download-btn"
+                    type="button"
+                >
+
+                    <span>
+                        ↓
+                    </span>
+
+                    <span class="hidden sm:inline">
+                        Download
+                    </span>
+
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <main
+            class="flex flex-1 min-h-0 relative"
+        >
+
+            <aside
+                id="sidebar"
+                class="sidebar w-64 shrink-0 flex flex-col"
+            >
+
+                <div class="sidebar-top">
+
+                    <div
+                        class="flex items-center justify-between"
+                    >
+
+                        <div>
+
+                            <p class="sidebar-label">
+                                WORKSPACE
+                            </p>
+
+                            <h2 class="sidebar-title">
+                                Pages
+                            </h2>
+
+                        </div>
+
+                        <button
+                            id="closeMenuBtn"
+                            class="icon-btn md:hidden"
+                            type="button"
+                            aria-label="Close pages"
+                        >
+                            ×
+                        </button>
+
+                    </div>
+
+
+                    <button
+                        id="newPageBtn"
+                        class="new-page-btn w-full mt-5"
+                        type="button"
+                    >
+
+                        <span class="text-lg">
+                            +
+                        </span>
+
+                        <span>
+                            New Page
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="pagesList"
+                    class="pages-list flex-1 overflow-y-auto"
+                ></div>
+
+
+                <div class="sidebar-bottom">
+
+                    <div class="temporary-info">
+
+                        <span class="status-dot"></span>
+
+                        <div>
+
+                            <p class="text-sm font-medium">
+                                Temporary
+                            </p>
+
+                            <p class="text-xs text-gray-400">
+                                Cleared on refresh
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+
+            <div
+                id="sidebarOverlay"
+                class="sidebar-overlay"
+            ></div>
+
+
+            <section
+                class="editor-area flex-1 min-w-0"
+            >
+
+                <div class="editor-toolbar">
+
+                    <div class="min-w-0">
+
+                        <input
+                            id="pageTitle"
+                            type="text"
+                            value="Untitled Page"
+                            maxlength="100"
+                            class="page-title-input"
+                            aria-label="Page title"
+                        >
+
+                        <p
+                            id="pageMeta"
+                            class="page-meta"
+                        >
+                            Page 1
+                        </p>
+
+                    </div>
+
+
+                    <div class="flex items-center gap-1">
+
+                        <button
+                            id="headingBtn"
+                            class="toolbar-btn heading-btn"
+                            type="button"
+                            title="Make current line a heading"
+                            aria-label="Make current line a heading"
+                        >
+                            H
+                        </button>
+
+
+                        <button
+                            id="duplicateBtn"
+                            class="toolbar-btn"
+                            type="button"
+                            title="Duplicate page"
+                            aria-label="Duplicate page"
+                        >
+                            ⧉
+                        </button>
+
+
+                        <button
+                            id="deletePageBtn"
+                            class="toolbar-btn danger"
+                            type="button"
+                            title="Delete page"
+                            aria-label="Delete page"
+                        >
+                            🗑
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="paperContainer"
+                    class="paper-container"
+                >
+
+                    <div
+                        id="paper"
+                        class="paper lined-paper"
+                    >
+
+                        <div class="paper-margin"></div>
+
+                        <div
+                            id="noteEditor"
+                            class="note-editor"
+                            contenteditable="true"
+                            role="textbox"
+                            aria-multiline="true"
+                            data-placeholder="Start writing something..."
+                            spellcheck="true"
+                            aria-label="Note editor"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <footer class="editor-footer">
+
+                    <div class="footer-control">
+
+                        <span class="footer-icon">
+                            📄
+                        </span>
+
+                        <span
+                            class="footer-label hidden sm:inline"
+                        >
+                            Paper
+                        </span>
+
+                        <div class="paper-switch">
+
+                            <button
+                                id="linedBtn"
+                                class="paper-option active"
+                                type="button"
+                            >
+                                Lined
+                            </button>
+
+                            <button
+                                id="plainBtn"
+                                class="paper-option"
+                                type="button"
+                            >
+                                Plain
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="editor-stats">
+
+                        <span class="built-by">
+                            Built by
+                            <strong>ANKIT</strong>
+                        </span>
+
+                        <span class="stat-separator">
+                            •
+                        </span>
+
+                        <span id="wordCount">
+                            0 words
+                        </span>
+
+                        <span class="stat-separator">
+                            •
+                        </span>
+
+                        <span id="charCount">
+                            0 characters
+                        </span>
+
+                    </div>
+
+                </footer>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <div
+        id="clearModal"
+        class="modal hidden"
+    >
+
+        <div class="modal-card">
+
+            <div class="modal-icon">
+                ⚠
+            </div>
+
+            <h3>
+                Clear everything?
+            </h3>
+
+            <p>
+                All temporary pages and notes will be removed.
+                This cannot be undone.
+            </p>
+
+            <div class="modal-actions">
+
+                <button
+                    id="cancelClearBtn"
+                    class="modal-cancel"
+                    type="button"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    id="confirmClearBtn"
+                    class="modal-danger"
+                    type="button"
+                >
+                    Clear Everything
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
