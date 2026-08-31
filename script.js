@@ -20,6 +20,7 @@ const wordCount = document.getElementById("wordCount");
 const charCount = document.getElementById("charCount");
 
 const paper = document.getElementById("paper");
+const paperContainer = document.getElementById("paperContainer");
 
 const menuBtn = document.getElementById("menuBtn");
 const closeMenuBtn = document.getElementById("closeMenuBtn");
@@ -1169,6 +1170,23 @@ document.addEventListener(
             }
         }
     }
+);
+
+
+// Fix: two-finger trackpad scroll not working over the
+paperContainer.addEventListener(
+    "wheel",
+    event => {
+
+        if (event.deltaY !== 0) {
+
+            paperContainer.scrollTop +=
+                event.deltaY;
+
+            event.preventDefault();
+        }
+    },
+    { passive: false }
 );
 
 
