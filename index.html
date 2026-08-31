@@ -37,6 +37,7 @@
         class="min-h-[100dvh] flex flex-col"
     >
 
+        <!-- HEADER -->
         <header
             class="app-header h-16 shrink-0 flex items-center justify-between px-4 md:px-6"
         >
@@ -51,6 +52,7 @@
                 >
                     ☰
                 </button>
+
 
                 <a
                     href="#"
@@ -67,6 +69,7 @@
 
                 </a>
 
+
                 <span
                     class="hidden sm:inline-block text-xs text-gray-400"
                 >
@@ -76,6 +79,7 @@
             </div>
 
 
+            <!-- HEADER ACTIONS -->
             <div class="flex items-center gap-2">
 
                 <button
@@ -85,6 +89,7 @@
                 >
                     Clear
                 </button>
+
 
                 <button
                     id="downloadBtn"
@@ -107,10 +112,12 @@
         </header>
 
 
+        <!-- MAIN -->
         <main
             class="flex flex-1 min-h-0 relative"
         >
 
+            <!-- SIDEBAR -->
             <aside
                 id="sidebar"
                 class="sidebar w-64 shrink-0 flex flex-col"
@@ -118,6 +125,7 @@
 
                 <div class="sidebar-top">
 
+                    <!-- SIDEBAR TITLE -->
                     <div
                         class="flex items-center justify-between"
                     >
@@ -134,6 +142,7 @@
 
                         </div>
 
+
                         <button
                             id="closeMenuBtn"
                             class="icon-btn md:hidden"
@@ -146,9 +155,50 @@
                     </div>
 
 
+                    <!-- TXT ACTIONS -->
+                    <div
+                        class="flex items-center justify-between gap-3 mt-4"
+                    >
+
+                        <!-- SAVE TXT -->
+                        <button
+                            id="saveTxtBtn"
+                            class="header-btn"
+                            type="button"
+                            title="Save current page as TXT"
+                            aria-label="Save current page as TXT"
+                        >
+                            Save TXT
+                        </button>
+
+
+                        <!-- OPEN TXT -->
+                        <button
+                            id="openTxtBtn"
+                            class="header-btn"
+                            type="button"
+                            title="Open a TXT file"
+                            aria-label="Open a TXT file"
+                        >
+                            Open TXT
+                        </button>
+
+                    </div>
+
+
+                    <!-- HIDDEN TXT FILE INPUT -->
+                    <input
+                        id="txtFileInput"
+                        type="file"
+                        accept=".txt,text/plain"
+                        hidden
+                    >
+
+
+                    <!-- NEW PAGE -->
                     <button
                         id="newPageBtn"
-                        class="new-page-btn w-full mt-5"
+                        class="new-page-btn w-full mt-2"
                         type="button"
                     >
 
@@ -165,12 +215,14 @@
                 </div>
 
 
+                <!-- PAGES LIST -->
                 <div
                     id="pagesList"
                     class="pages-list flex-1 overflow-y-auto"
                 ></div>
 
 
+                <!-- SIDEBAR BOTTOM -->
                 <div class="sidebar-bottom">
 
                     <div class="temporary-info">
@@ -196,16 +248,19 @@
             </aside>
 
 
+            <!-- SIDEBAR OVERLAY -->
             <div
                 id="sidebarOverlay"
                 class="sidebar-overlay"
             ></div>
 
 
+            <!-- EDITOR AREA -->
             <section
                 class="editor-area flex-1 min-w-0"
             >
 
+                <!-- EDITOR TOOLBAR -->
                 <div class="editor-toolbar">
 
                     <div class="min-w-0">
@@ -268,6 +323,7 @@
                 </div>
 
 
+                <!-- PAPER CONTAINER -->
                 <div
                     id="paperContainer"
                     class="paper-container"
@@ -279,6 +335,7 @@
                     >
 
                         <div class="paper-margin"></div>
+
 
                         <div
                             id="noteEditor"
@@ -296,6 +353,7 @@
                 </div>
 
 
+                <!-- FOOTER -->
                 <footer class="editor-footer">
 
                     <div class="footer-control">
@@ -304,11 +362,13 @@
                             📄
                         </span>
 
+
                         <span
                             class="footer-label hidden sm:inline"
                         >
                             Paper
                         </span>
+
 
                         <div class="paper-switch">
 
@@ -319,6 +379,7 @@
                             >
                                 Lined
                             </button>
+
 
                             <button
                                 id="plainBtn"
@@ -337,20 +398,24 @@
 
                         <span class="built-by">
                             Built by
-                            <strong>ANKIT</strong>
+                            <strong style="color:blue;">ANKIT</strong>
                         </span>
+
 
                         <span class="stat-separator">
                             •
                         </span>
+
 
                         <span id="wordCount">
                             0 words
                         </span>
 
+
                         <span class="stat-separator">
                             •
                         </span>
+
 
                         <span id="charCount">
                             0 characters
@@ -367,6 +432,7 @@
     </div>
 
 
+    <!-- CLEAR MODAL -->
     <div
         id="clearModal"
         class="modal hidden"
@@ -378,14 +444,17 @@
                 ⚠
             </div>
 
+
             <h3>
                 Clear everything?
             </h3>
+
 
             <p>
                 All temporary pages and notes will be removed.
                 This cannot be undone.
             </p>
+
 
             <div class="modal-actions">
 
@@ -396,6 +465,7 @@
                 >
                     Cancel
                 </button>
+
 
                 <button
                     id="confirmClearBtn"
