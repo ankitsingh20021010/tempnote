@@ -1,1193 +1,1442 @@
-const pagesList = document.getElementById("pagesList");
+:root {
+    --bg: #f5f6f8;
+    --surface: #ffffff;
+    --surface-soft: #fafafa;
+    --border: #e7e9ee;
 
-const newPageBtn = document.getElementById("newPageBtn");
-const downloadBtn = document.getElementById("downloadBtn");
-const clearBtn = document.getElementById("clearBtn");
+    --text: #17191c;
+    --text-soft: #686d76;
+    --text-muted: #9ca1aa;
 
-const pageTitle = document.getElementById("pageTitle");
-const pageMeta = document.getElementById("pageMeta");
+    --accent: #111827;
+    --accent-hover: #252b36;
 
-const noteEditor = document.getElementById("noteEditor");
+    --heading: #6C8CFF;
+    --heading-soft: rgba(108, 140, 255, 0.12);
 
-const headingBtn = document.getElementById("headingBtn");
-const duplicateBtn = document.getElementById("duplicateBtn");
-const deletePageBtn = document.getElementById("deletePageBtn");
+    --danger: #dc2626;
+    --danger-soft: #fef2f2;
 
-const linedBtn = document.getElementById("linedBtn");
-const plainBtn = document.getElementById("plainBtn");
+    --paper: #fffefa;
+    --paper-line: #e5e7eb;
+    --paper-margin: #f0a0a0;
 
-const wordCount = document.getElementById("wordCount");
-const charCount = document.getElementById("charCount");
+    --header-height: 64px;
+    --footer-height: 56px;
 
-const paper = document.getElementById("paper");
-const paperContainer = document.getElementById("paperContainer");
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
 
-const menuBtn = document.getElementById("menuBtn");
-const closeMenuBtn = document.getElementById("closeMenuBtn");
+    --shadow-sm:
+        0 1px 2px rgba(0, 0, 0, 0.04);
 
-const sidebar = document.getElementById("sidebar");
-const sidebarOverlay = document.getElementById("sidebarOverlay");
-
-const clearModal = document.getElementById("clearModal");
-const cancelClearBtn = document.getElementById("cancelClearBtn");
-const confirmClearBtn = document.getElementById("confirmClearBtn");
-
-
-let pages = [];
-let activePageId = null;
-let paperStyle = "lined";
-
-
-function createPageId() {
-    return (
-        Date.now().toString(36) +
-        Math.random().toString(36).substring(2, 8)
-    );
+    --shadow-md:
+        0 8px 30px rgba(0, 0, 0, 0.08);
 }
 
 
-function createPage(
-    title = "Untitled Page",
-    content = ""
-) {
-    return {
-        id: createPageId(),
-        title,
-        content,
-        createdAt: new Date()
-    };
+* {
+    box-sizing: border-box;
 }
 
 
-function initializeApp() {
-
-    const firstPage = createPage();
-
-    pages.push(firstPage);
-
-    activePageId = firstPage.id;
-
-    renderPages();
-
-    loadActivePage();
-
-    updatePaperStyle();
+html {
+    width: 100%;
+    min-height: 100%;
+    -webkit-text-size-adjust: 100%;
 }
 
 
-function getActivePage() {
+body {
+    margin: 0;
+    width: 100%;
+    min-height: 100dvh;
 
-    return pages.find(
-        page => page.id === activePageId
-    );
+    background: var(--bg);
+    color: var(--text);
+
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 
-function renderPages() {
-
-    pagesList.innerHTML = "";
-
-    pages.forEach(page => {
-
-        const pageButton =
-            document.createElement("button");
-
-        pageButton.type = "button";
-
-        pageButton.className =
-            "page-item";
+button,
+input,
+textarea {
+    font: inherit;
+}
 
 
-        if (page.id === activePageId) {
-
-            pageButton.classList.add(
-                "active"
-            );
-        }
+button {
+    border: 0;
+}
 
 
-        const icon =
-            document.createElement("span");
-
-        icon.className =
-            "page-item-icon";
-
-        icon.textContent =
-            "▤";
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
 
 
-        const content =
-            document.createElement("span");
-
-        content.className =
-            "page-item-content";
+::selection {
+    background: rgba(108, 140, 255, 0.18);
+}
 
 
-        const title =
-            document.createElement("span");
+.app-header {
+    background: rgba(255, 255, 255, 0.92);
+    border-bottom: 1px solid var(--border);
 
-        title.className =
-            "page-item-title";
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
 
-        title.textContent =
-            page.title.trim() ||
-            "Untitled Page";
-
-
-        const preview =
-            document.createElement("span");
-
-        preview.className =
-            "page-item-preview";
+    z-index: 50;
+}
 
 
-        const previewText =
-            htmlToPlainText(
-                page.content
-            )
-            .replace(/\s+/g, " ")
-            .trim();
+.brand {
+    color: var(--text);
+    text-decoration: none;
+}
 
 
-        preview.textContent =
-            previewText ||
-            "Empty page";
+.brand-icon {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #111827;
+    color: white;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    box-shadow:
+        0 4px 10px rgba(17, 24, 39, 0.18);
+}
 
 
-        content.appendChild(title);
-
-        content.appendChild(preview);
-
-        pageButton.appendChild(icon);
-
-        pageButton.appendChild(content);
+.brand-name {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+}
 
 
-        pageButton.addEventListener(
-            "click",
-            () => {
+.icon-btn {
+    width: 38px;
+    height: 38px;
 
-                saveCurrentPage();
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-                activePageId =
-                    page.id;
+    border-radius: 10px;
 
-                loadActivePage();
+    background: transparent;
+    color: var(--text-soft);
 
-                renderPages();
+    cursor: pointer;
 
-                closeMobileSidebar();
-            }
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease;
+}
+
+
+.icon-btn:hover {
+    background: #f3f4f6;
+    color: var(--text);
+}
+
+
+.icon-btn:active {
+    transform: scale(0.94);
+}
+
+
+.header-btn {
+    height: 38px;
+
+    padding: 0 14px;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: transparent;
+    color: var(--text-soft);
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.header-btn:hover {
+    background: #f3f4f6;
+    color: var(--text);
+}
+
+
+.download-btn {
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 0 14px;
+
+    border-radius: 9px;
+
+    background: var(--accent);
+    color: white;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 3px 10px rgba(17, 24, 39, 0.14);
+
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.download-btn:hover {
+    background: var(--accent-hover);
+
+    box-shadow:
+        0 5px 16px rgba(17, 24, 39, 0.18);
+}
+
+
+.download-btn:active {
+    transform: translateY(1px);
+}
+
+
+.sidebar {
+    background: #fafbfc;
+
+    border-right: 1px solid var(--border);
+
+    transition:
+        transform 0.28s ease,
+        box-shadow 0.28s ease;
+}
+
+
+.sidebar-top {
+    padding: 22px 16px 16px;
+}
+
+
+.sidebar-label {
+    margin: 0 0 3px;
+
+    color: var(--text-muted);
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 0.12em;
+}
+
+
+.sidebar-title {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 20px;
+    font-weight: 700;
+
+    letter-spacing: -0.03em;
+}
+
+
+.new-page-btn {
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    border-radius: 10px;
+
+    background: white;
+    border: 1px solid var(--border);
+
+    color: var(--text);
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow: var(--shadow-sm);
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.new-page-btn:hover {
+    background: #f8f9fa;
+    border-color: #d9dce2;
+
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+
+.new-page-btn:active {
+    transform: scale(0.98);
+}
+
+
+.pages-list {
+    padding: 4px 10px 16px;
+
+    scrollbar-width: thin;
+    scrollbar-color: #d8dbe0 transparent;
+}
+
+
+.pages-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+
+.pages-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+.pages-list::-webkit-scrollbar-thumb {
+    background: #d8dbe0;
+    border-radius: 20px;
+}
+
+
+.page-item {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 10px 11px;
+
+    margin-bottom: 3px;
+
+    border-radius: 9px;
+
+    background: transparent;
+    color: var(--text-soft);
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease,
+        color 0.18s ease;
+}
+
+
+.page-item:hover {
+    background: #f0f2f5;
+    color: var(--text);
+}
+
+
+.page-item.active {
+    background: #eceef1;
+    color: var(--text);
+}
+
+
+.page-item-icon {
+    width: 28px;
+    height: 28px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 7px;
+
+    background: white;
+    border: 1px solid var(--border);
+
+    font-size: 13px;
+}
+
+
+.page-item.active .page-item-icon {
+    background: #111827;
+    border-color: #111827;
+    color: white;
+}
+
+
+.page-item-content {
+    min-width: 0;
+    flex: 1;
+}
+
+
+.page-item-title {
+    display: block;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+.page-item-preview {
+    display: block;
+
+    margin-top: 2px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: var(--text-muted);
+
+    font-size: 11px;
+}
+
+
+.sidebar-bottom {
+    padding: 12px;
+
+    border-top:
+        1px solid var(--border);
+}
+
+
+.temporary-info {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 10px;
+
+    border-radius: 9px;
+
+    background: #f5f6f8;
+}
+
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #22c55e;
+
+    box-shadow:
+        0 0 0 4px rgba(34, 197, 94, 0.10);
+}
+
+
+.editor-area {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+    min-height: 0;
+
+    background: var(--bg);
+}
+
+
+.editor-toolbar {
+    min-height: 68px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 10px 22px;
+
+    background: rgba(255, 255, 255, 0.72);
+    border-bottom: 1px solid var(--border);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    z-index: 10;
+}
+
+
+.page-title-input {
+    width: min(500px, 100%);
+
+    padding: 0;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    color: var(--text);
+
+    font-size: 16px;
+    font-weight: 700;
+
+    letter-spacing: -0.025em;
+}
+
+
+.page-title-input::placeholder {
+    color: #b4b8bf;
+}
+
+
+.page-meta {
+    margin: 3px 0 0;
+
+    color: var(--text-muted);
+
+    font-size: 11px;
+}
+
+
+.toolbar-btn {
+    width: 34px;
+    height: 34px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: transparent;
+    color: var(--text-muted);
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease;
+}
+
+
+.toolbar-btn:hover {
+    background: #f0f1f3;
+    color: var(--text);
+}
+
+
+.toolbar-btn:active {
+    transform: scale(0.94);
+}
+
+
+.heading-btn {
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    color: var(--text-muted);
+}
+
+
+.heading-btn:hover {
+    background: var(--heading-soft);
+    color: var(--heading);
+}
+
+
+.heading-btn.active {
+    background: var(--heading-soft);
+    color: var(--heading);
+
+    box-shadow:
+        inset 0 0 0 1px rgba(108, 140, 255, 0.16);
+}
+
+
+.toolbar-btn.danger:hover {
+    background: var(--danger-soft);
+    color: var(--danger);
+}
+
+
+.paper-container {
+    flex: 1;
+
+    min-height: 0;
+
+    overflow: auto;
+
+    padding: 28px;
+
+    display: flex;
+    justify-content: center;
+
+    scrollbar-width: thin;
+    scrollbar-color: #d5d8dd transparent;
+}
+
+
+.paper-container::-webkit-scrollbar {
+    width: 7px;
+}
+
+
+.paper-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+.paper-container::-webkit-scrollbar-thumb {
+    background: #d5d8dd;
+    border-radius: 20px;
+}
+
+
+.paper {
+    position: relative;
+
+    width: min(900px, 100%);
+
+    min-height: 100%;
+
+    background-color: var(--paper);
+
+    border: 1px solid #e8e5dc;
+
+    border-radius: 5px;
+
+    box-shadow:
+        0 3px 15px rgba(0, 0, 0, 0.045);
+
+    overflow: hidden;
+}
+
+
+.lined-paper {
+    background-image:
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 31px,
+            var(--paper-line) 31px,
+            var(--paper-line) 32px
         );
-
-
-        pagesList.appendChild(
-            pageButton
-        );
-
-    });
-
-
-    updatePageMeta();
 }
 
 
-function loadActivePage() {
+.paper-margin {
+    position: absolute;
 
-    const page =
-        getActivePage();
+    top: 0;
+    bottom: 0;
 
-    if (!page) return;
+    left: 66px;
 
+    width: 1px;
 
-    pageTitle.value =
-        page.title ||
-        "Untitled Page";
+    background: var(--paper-margin);
 
+    opacity: 0.65;
 
-    noteEditor.innerHTML =
-        page.content || "";
-
-
-    updatePageMeta();
-
-    updateCounters();
-
-    updateHeadingButtonState();
+    pointer-events: none;
 }
 
 
-function saveCurrentPage() {
+.note-editor {
+    position: relative;
 
-    const page =
-        getActivePage();
+    z-index: 2;
 
-    if (!page) return;
+    width: 100%;
 
+    min-height: 100%;
 
-    page.title =
-        pageTitle.value.trim() ||
-        "Untitled Page";
+    display: block;
 
+    padding: 13px 40px 60px 86px;
 
-    page.content =
-        noteEditor.innerHTML;
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    color: #24272c;
+
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        sans-serif;
+
+    font-size: 15px;
+
+    line-height: 32px;
+
+    white-space: pre-wrap;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
+
+    cursor: text;
 }
 
 
-function createNewPage() {
+.note-editor:empty::before {
+    content: attr(data-placeholder);
 
-    saveCurrentPage();
+    color: #aeb2b9;
 
-
-    const newPage =
-        createPage();
-
-
-    pages.push(newPage);
-
-    activePageId =
-        newPage.id;
-
-
-    renderPages();
-
-    loadActivePage();
-
-    closeMobileSidebar();
-
-
-    setTimeout(
-        () => {
-            noteEditor.focus();
-        },
-        50
-    );
+    pointer-events: none;
 }
 
 
-function deleteActivePage() {
-
-    if (pages.length === 1) {
-
-        const page =
-            getActivePage();
-
-        if (!page) return;
-
-
-        page.title =
-            "Untitled Page";
-
-        page.content =
-            "";
-
-
-        loadActivePage();
-
-        renderPages();
-
-        noteEditor.focus();
-
-        return;
-    }
-
-
-    const currentIndex =
-        pages.findIndex(
-            page =>
-                page.id === activePageId
-        );
-
-
-    pages =
-        pages.filter(
-            page =>
-                page.id !== activePageId
-        );
-
-
-    const nextIndex =
-        Math.max(
-            0,
-            currentIndex - 1
-        );
-
-
-    activePageId =
-        pages[nextIndex].id;
-
-
-    loadActivePage();
-
-    renderPages();
+.note-editor:focus {
+    outline: none;
 }
 
 
-function duplicateActivePage() {
+.note-editor > div,
+.note-editor > p {
+    margin: 0;
 
-    saveCurrentPage();
+    min-height: 32px;
 
-
-    const currentPage =
-        getActivePage();
-
-    if (!currentPage) return;
-
-
-    const duplicate =
-        createPage(
-            `${currentPage.title || "Untitled Page"} Copy`,
-            currentPage.content
-        );
-
-
-    const currentIndex =
-        pages.findIndex(
-            page =>
-                page.id === activePageId
-        );
-
-
-    pages.splice(
-        currentIndex + 1,
-        0,
-        duplicate
-    );
-
-
-    activePageId =
-        duplicate.id;
-
-
-    renderPages();
-
-    loadActivePage();
-
-    closeMobileSidebar();
+    line-height: 32px;
 }
 
 
-pageTitle.addEventListener(
-    "input",
-    () => {
+.note-editor .note-heading {
+    margin: 0;
 
-        const page =
-            getActivePage();
+    min-height: 40px;
 
-        if (!page) return;
+    color: #6C8CFF;
 
+    font-size: 22px;
 
-        page.title =
-            pageTitle.value.trim() ||
-            "Untitled Page";
+    font-weight: 800;
 
+    line-height: 40px;
 
-        renderPages();
-    }
-);
-
-
-noteEditor.addEventListener(
-    "input",
-    () => {
-
-        const page =
-            getActivePage();
-
-        if (!page) return;
-
-
-        page.content =
-            noteEditor.innerHTML;
-
-
-        updateCounters();
-
-        renderPages();
-
-        updateHeadingButtonState();
-    }
-);
-
-
-function getEditorText() {
-
-    return noteEditor.innerText
-        .replace(/\u00a0/g, " ");
+    letter-spacing: -0.025em;
 }
 
 
-function updateCounters() {
-
-    const raw =
-        getEditorText();
-
-
-    const text =
-        raw.trim();
-
-
-    const characters =
-        raw.length;
-
-
-    const words =
-        text.length === 0
-            ? 0
-            : text.split(/\s+/).length;
-
-
-    wordCount.textContent =
-        `${words} ${
-            words === 1
-                ? "word"
-                : "words"
-        }`;
-
-
-    charCount.textContent =
-        `${characters} ${
-            characters === 1
-                ? "character"
-                : "characters"
-        }`;
+.note-editor .note-heading:hover {
+    color: #5c7df5;
 }
 
 
-function updatePageMeta() {
-
-    const index =
-        pages.findIndex(
-            page =>
-                page.id === activePageId
-        );
-
-
-    if (index === -1) return;
-
-
-    pageMeta.textContent =
-        `Page ${index + 1} of ${pages.length}`;
+.plain-paper {
+    background-image: none;
 }
 
 
-function getCurrentBlock() {
-
-    const selection =
-        window.getSelection();
-
-
-    if (
-        !selection ||
-        selection.rangeCount === 0
-    ) {
-        return null;
-    }
-
-
-    let node =
-        selection.anchorNode;
-
-
-    if (
-        node &&
-        node.nodeType === Node.TEXT_NODE
-    ) {
-        node =
-            node.parentElement;
-    }
-
-
-    if (
-        !(node instanceof Element)
-    ) {
-        return null;
-    }
-
-
-    const block =
-        node.closest(
-            "div, p, li"
-        );
-
-
-    if (
-        block &&
-        noteEditor.contains(block)
-    ) {
-        return block;
-    }
-
-
-    return null;
+.plain-paper .paper-margin {
+    display: none;
 }
 
 
-function placeCaretAtEnd(element) {
-
-    const range =
-        document.createRange();
-
-
-    range.selectNodeContents(
-        element
-    );
-
-
-    range.collapse(false);
-
-
-    const selection =
-        window.getSelection();
-
-
-    selection.removeAllRanges();
-
-    selection.addRange(range);
+.plain-paper .note-editor {
+    line-height: 1.75;
 }
 
 
-function createHeadingLine() {
-
-    const heading =
-        document.createElement("div");
-
-
-    heading.className =
-        "note-heading";
-
-
-    heading.innerHTML =
-        "<br>";
-
-
-    noteEditor.appendChild(
-        heading
-    );
-
-
-    placeCaretAtEnd(
-        heading
-    );
-
-
-    saveCurrentPage();
-
-    updateCounters();
-
-    renderPages();
-
-    updateHeadingButtonState();
+.plain-paper .note-editor > div,
+.plain-paper .note-editor > p {
+    line-height: 1.75;
+    min-height: 0;
 }
 
 
-function makeHeading() {
-
-    const block =
-        getCurrentBlock();
-
-
-    if (!block) {
-
-        createHeadingLine();
-
-        return;
-    }
-
-
-    if (
-        block === noteEditor
-    ) {
-
-        createHeadingLine();
-
-        return;
-    }
-
-
-    block.classList.toggle(
-        "note-heading"
-    );
-
-
-    saveCurrentPage();
-
-    updateCounters();
-
-    renderPages();
-
-    updateHeadingButtonState();
+.plain-paper .note-editor .note-heading {
+    line-height: 1.25;
 }
 
 
-function updateHeadingButtonState() {
+.editor-footer {
+    min-height: var(--footer-height);
 
-    const block =
-        getCurrentBlock();
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
+    gap: 15px;
 
-    if (
-        block &&
-        block.classList.contains(
-            "note-heading"
-        )
-    ) {
+    padding: 8px 20px;
 
-        headingBtn.classList.add(
-            "active"
-        );
+    background: rgba(255, 255, 255, 0.92);
+    border-top: 1px solid var(--border);
 
-    } else {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 
-        headingBtn.classList.remove(
-            "active"
-        );
-    }
+    z-index: 10;
 }
 
 
-headingBtn.addEventListener(
-    "mousedown",
-    event => {
+.footer-control {
+    display: flex;
+    align-items: center;
 
-        event.preventDefault();
-    }
-);
-
-
-headingBtn.addEventListener(
-    "click",
-    () => {
-
-        makeHeading();
-    }
-);
-
-
-noteEditor.addEventListener(
-    "keyup",
-    updateHeadingButtonState
-);
-
-
-noteEditor.addEventListener(
-    "mouseup",
-    updateHeadingButtonState
-);
-
-
-document.addEventListener(
-    "selectionchange",
-    () => {
-
-        if (
-            noteEditor.contains(
-                document.activeElement
-            ) ||
-            document.activeElement ===
-                noteEditor
-        ) {
-
-            updateHeadingButtonState();
-        }
-    }
-);
-
-
-function updatePaperStyle() {
-
-    if (
-        paperStyle === "lined"
-    ) {
-
-        paper.classList.add(
-            "lined-paper"
-        );
-
-        paper.classList.remove(
-            "plain-paper"
-        );
-
-
-        linedBtn.classList.add(
-            "active"
-        );
-
-        plainBtn.classList.remove(
-            "active"
-        );
-
-    } else {
-
-        paper.classList.remove(
-            "lined-paper"
-        );
-
-        paper.classList.add(
-            "plain-paper"
-        );
-
-
-        plainBtn.classList.add(
-            "active"
-        );
-
-        linedBtn.classList.remove(
-            "active"
-        );
-    }
+    gap: 8px;
 }
 
 
-linedBtn.addEventListener(
-    "click",
-    () => {
-
-        paperStyle =
-            "lined";
-
-        updatePaperStyle();
-    }
-);
-
-
-plainBtn.addEventListener(
-    "click",
-    () => {
-
-        paperStyle =
-            "plain";
-
-        updatePaperStyle();
-    }
-);
-
-
-function htmlToPlainText(html) {
-
-    const temp =
-        document.createElement("div");
-
-
-    temp.innerHTML =
-        html || "";
-
-
-    return temp.innerText
-        .replace(/\u00a0/g, " ")
-        .trim();
+.footer-icon {
+    font-size: 14px;
 }
 
 
-function sanitizeFilename(filename) {
+.footer-label {
+    color: var(--text-soft);
 
-    return filename
-        .replace(
-            /[<>:"/\\|?*\x00-\x1F]/g,
-            ""
-        )
-        .trim()
-        .substring(0, 80)
-        || "tempnote";
+    font-size: 12px;
+    font-weight: 600;
 }
 
 
-function downloadText(
-    filename,
-    text
-) {
+.paper-switch {
+    display: flex;
 
-    const blob =
-        new Blob(
-            [text],
-            {
-                type:
-                    "text/plain;charset=utf-8"
-            }
-        );
+    padding: 3px;
 
+    border-radius: 8px;
 
-    const url =
-        URL.createObjectURL(
-            blob
-        );
-
-
-    const link =
-        document.createElement("a");
-
-
-    link.href =
-        url;
-
-    link.download =
-        filename;
-
-
-    document.body.appendChild(
-        link
-    );
-
-
-    link.click();
-
-
-    document.body.removeChild(
-        link
-    );
-
-
-    setTimeout(
-        () => {
-
-            URL.revokeObjectURL(
-                url
-            );
-
-        },
-        1000
-    );
+    background: #f0f1f3;
 }
 
 
-function downloadCurrentPage() {
+.paper-option {
+    min-width: 58px;
+    height: 28px;
 
-    saveCurrentPage();
+    padding: 0 10px;
 
+    border-radius: 6px;
 
-    const page =
-        getActivePage();
+    background: transparent;
 
+    color: var(--text-muted);
 
-    if (!page) return;
+    font-size: 11px;
+    font-weight: 600;
 
+    cursor: pointer;
 
-    const title =
-        page.title.trim() ||
-        "Untitled Page";
-
-
-    const content =
-        htmlToPlainText(
-            page.content
-        );
-
-
-    const fileContent =
-`${title}
-
-${content}
-
-────────────────────────────
-Created with TempNote
-https://tempnote.in
-`;
-
-
-    downloadText(
-        `${sanitizeFilename(title)}.txt`,
-        fileContent
-    );
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 
-function downloadAllPages() {
-
-    saveCurrentPage();
-
-
-    if (
-        pages.length === 0
-    ) {
-        return;
-    }
-
-
-    let completeText =
-`TempNote
-Temporary Notes Export
-https://tempnote.in
-
-`;
-
-
-    pages.forEach(
-        (page, index) => {
-
-            completeText +=
-`========================================
-Page ${index + 1}: ${
-    page.title || "Untitled Page"
-}
-========================================
-
-${
-    htmlToPlainText(
-        page.content || ""
-    )
-}
-
-`;
-
-        }
-    );
-
-
-    completeText +=
-`========================================
-Generated by TempNote
-========================================`;
-
-
-    downloadText(
-        "tempnote-all-pages.txt",
-        completeText
-    );
+.paper-option:hover {
+    color: var(--text-soft);
 }
 
 
-downloadBtn.addEventListener(
-    "click",
-    () => {
+.paper-option.active {
+    background: white;
 
-        if (
-            pages.length > 1
-        ) {
+    color: var(--text);
 
-            downloadAllPages();
-
-        } else {
-
-            downloadCurrentPage();
-        }
-    }
-);
-
-
-newPageBtn.addEventListener(
-    "click",
-    () => {
-
-        createNewPage();
-    }
-);
-
-
-duplicateBtn.addEventListener(
-    "click",
-    () => {
-
-        duplicateActivePage();
-    }
-);
-
-
-deletePageBtn.addEventListener(
-    "click",
-    () => {
-
-        deleteActivePage();
-    }
-);
-
-
-clearBtn.addEventListener(
-    "click",
-    () => {
-
-        clearModal.classList.remove(
-            "hidden"
-        );
-    }
-);
-
-
-cancelClearBtn.addEventListener(
-    "click",
-    () => {
-
-        clearModal.classList.add(
-            "hidden"
-        );
-    }
-);
-
-
-confirmClearBtn.addEventListener(
-    "click",
-    () => {
-
-        pages = [];
-
-
-        const firstPage =
-            createPage();
-
-
-        pages.push(
-            firstPage
-        );
-
-
-        activePageId =
-            firstPage.id;
-
-
-        clearModal.classList.add(
-            "hidden"
-        );
-
-
-        renderPages();
-
-        loadActivePage();
-
-        closeMobileSidebar();
-    }
-);
-
-
-clearModal.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target ===
-            clearModal
-        ) {
-
-            clearModal.classList.add(
-                "hidden"
-            );
-        }
-    }
-);
-
-
-function openMobileSidebar() {
-
-    sidebar.classList.add(
-        "open"
-    );
-
-
-    sidebarOverlay.classList.add(
-        "show"
-    );
+    box-shadow:
+        0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 
-function closeMobileSidebar() {
+.editor-stats {
+    display: flex;
+    align-items: center;
 
-    sidebar.classList.remove(
-        "open"
-    );
+    gap: 7px;
 
+    color: var(--text-muted);
 
-    sidebarOverlay.classList.remove(
-        "show"
-    );
+    font-size: 11px;
 }
 
 
-menuBtn.addEventListener(
-    "click",
-    openMobileSidebar
-);
+.stat-separator {
+    color: #d0d3d8;
+}
 
 
-closeMenuBtn.addEventListener(
-    "click",
-    closeMobileSidebar
-);
+.built-by {
+    color: #a4a8af;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    letter-spacing: 0.01em;
+
+    white-space: nowrap;
+}
 
 
-sidebarOverlay.addEventListener(
-    "click",
-    closeMobileSidebar
-);
+.built-by strong {
+    color: #777d86;
+
+    font-weight: 700;
+}
 
 
-document.addEventListener(
-    "keydown",
-    event => {
+.sidebar-overlay {
+    position: fixed;
 
-        if (
-            event.key === "Escape"
-        ) {
+    inset: 0;
 
-            closeMobileSidebar();
+    background: rgba(15, 23, 42, 0.28);
 
-            clearModal.classList.add(
-                "hidden"
-            );
-        }
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+
+    z-index: 60;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.28s ease,
+        visibility 0.28s ease;
+}
+
+
+.sidebar-overlay.show {
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+}
+
+
+.modal {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 100;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(15, 23, 42, 0.35);
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+
+    opacity: 1;
+
+    transition: opacity 0.2s ease;
+}
+
+
+.modal.hidden {
+    display: none;
+}
+
+
+.modal-card {
+    width: min(400px, 100%);
+
+    padding: 26px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 16px;
+
+    background: white;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.16);
+
+    text-align: center;
+}
+
+
+.modal-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 15px;
+
+    border-radius: 12px;
+
+    background: var(--danger-soft);
+
+    color: var(--danger);
+
+    font-size: 18px;
+}
+
+
+.modal-card h3 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    letter-spacing: -0.025em;
+}
+
+
+.modal-card p {
+    margin: 8px 0 22px;
+
+    color: var(--text-soft);
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+
+.modal-actions {
+    display: flex;
+
+    gap: 9px;
+}
+
+
+.modal-cancel,
+.modal-danger {
+    flex: 1;
+
+    height: 40px;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.modal-cancel {
+    background: #f3f4f6;
+    color: var(--text);
+}
+
+
+.modal-cancel:hover {
+    background: #e9eaed;
+}
+
+
+.modal-danger {
+    background: var(--danger);
+    color: white;
+}
+
+
+.modal-danger:hover {
+    background: #b91c1c;
+}
+
+
+@media (max-width: 900px) {
+
+    .sidebar {
+        width: 230px;
     }
-);
 
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            (event.ctrlKey ||
-             event.metaKey) &&
-            event.key.toLowerCase() === "n"
-        ) {
-
-            event.preventDefault();
-
-            createNewPage();
-        }
+    .paper-container {
+        padding: 20px;
     }
-);
 
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            (event.ctrlKey ||
-             event.metaKey) &&
-            event.key.toLowerCase() === "s"
-        ) {
-
-            event.preventDefault();
-
-
-            if (
-                pages.length > 1
-            ) {
-
-                downloadAllPages();
-
-            } else {
-
-                downloadCurrentPage();
-            }
-        }
+    .note-editor {
+        padding-left: 72px;
     }
-);
+
+    .paper-margin {
+        left: 54px;
+    }
+
+}
 
 
-// Fix: two-finger trackpad scroll not working over the
-paperContainer.addEventListener(
-    "wheel",
-    event => {
+@media (max-width: 767px) {
 
-        if (event.deltaY !== 0) {
-
-            paperContainer.scrollTop +=
-                event.deltaY;
-
-            event.preventDefault();
-        }
-    },
-    { passive: false }
-);
+    body {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
 
 
-initializeApp();
+    .app-header {
+        height: 58px;
+        min-height: 58px;
+
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+
+    .brand-name {
+        font-size: 16px;
+    }
+
+
+    .brand-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+
+    .sidebar {
+        position: fixed;
+
+        top: 0;
+        bottom: 0;
+        left: 0;
+
+        width: min(290px, 84vw);
+
+        z-index: 70;
+
+        transform: translateX(-105%);
+
+        background: #fafbfc;
+
+        box-shadow: none;
+    }
+
+
+    .sidebar.open {
+        transform: translateX(0);
+
+        box-shadow:
+            10px 0 40px rgba(0, 0, 0, 0.12);
+    }
+
+
+    .editor-toolbar {
+        min-height: 58px;
+
+        padding: 8px 12px;
+    }
+
+
+    .page-title-input {
+        font-size: 14px;
+    }
+
+
+    .page-meta {
+        font-size: 10px;
+    }
+
+
+    .toolbar-btn {
+        width: 32px;
+        height: 32px;
+    }
+
+
+    .heading-btn {
+        font-size: 12px;
+    }
+
+
+    .paper-container {
+        padding: 12px 8px 14px;
+    }
+
+
+    .paper {
+        min-height: 100%;
+
+        border-radius: 3px;
+
+        box-shadow:
+            0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+
+    .paper-margin {
+        left: 42px;
+    }
+
+
+    .note-editor {
+        padding:
+            13px
+            14px
+            50px
+            55px;
+
+        font-size: 15px;
+
+        line-height: 32px;
+    }
+
+
+    .note-editor .note-heading {
+        font-size: 20px;
+
+        line-height: 38px;
+
+        min-height: 38px;
+    }
+
+
+    .note-editor > div,
+    .note-editor > p {
+        min-height: 32px;
+        line-height: 32px;
+    }
+
+
+    .editor-footer {
+        min-height: 52px;
+
+        padding:
+            7px
+            10px
+            calc(7px + env(safe-area-inset-bottom));
+
+        gap: 8px;
+    }
+
+
+    .footer-control {
+        gap: 5px;
+    }
+
+
+    .footer-icon {
+        display: none;
+    }
+
+
+    .paper-option {
+        min-width: 54px;
+        height: 28px;
+    }
+
+
+    .editor-stats {
+        font-size: 10px;
+
+        white-space: nowrap;
+    }
+
+
+    .built-by {
+        font-size: 9px;
+    }
+
+
+    .stat-separator {
+        display: none;
+    }
+
+
+    #charCount {
+        display: none;
+    }
+
+
+    .modal {
+        padding: 15px;
+    }
+
+
+    .modal-card {
+        padding: 22px;
+
+        border-radius: 14px;
+    }
+
+}
+
+
+@media (max-width: 420px) {
+
+    .download-btn {
+        width: 38px;
+        padding: 0;
+    }
+
+
+    .download-btn span:first-child {
+        font-size: 18px;
+    }
+
+
+    .editor-toolbar {
+        gap: 6px;
+    }
+
+
+    .paper-container {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+
+    .paper-margin {
+        left: 36px;
+    }
+
+
+    .note-editor {
+        padding-left: 47px;
+        padding-right: 12px;
+    }
+
+
+    .note-editor .note-heading {
+        font-size: 19px;
+
+        line-height: 37px;
+    }
+
+
+    .paper-option {
+        min-width: 50px;
+
+        padding-left: 7px;
+        padding-right: 7px;
+    }
+
+
+    .built-by {
+        font-size: 8px;
+    }
+
+}
+
+
+@media (hover: none) {
+
+    .page-item:hover {
+        background: transparent;
+    }
+
+
+    .page-item.active {
+        background: #eceef1;
+    }
+
+
+    .download-btn:hover {
+        background: var(--accent);
+    }
+
+
+    .toolbar-btn:hover {
+        background: transparent;
+        color: var(--text-muted);
+    }
+
+
+    .heading-btn:hover {
+        background: transparent;
+        color: var(--text-muted);
+    }
+
+
+    .heading-btn.active {
+        background: var(--heading-soft);
+        color: var(--heading);
+    }
+
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+
+        scroll-behavior: auto !important;
+
+        transition-duration: 0.01ms !important;
+
+        animation-duration: 0.01ms !important;
+
+        animation-iteration-count: 1 !important;
+    }
+
+}
